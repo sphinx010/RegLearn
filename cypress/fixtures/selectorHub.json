@@ -1,0 +1,19 @@
+{
+  "signUpPage": {
+    "fullName": "#signup-name",
+    "work_email": "#signup-email",
+    "password": "#signup-password",
+    "confirmPassword": "#signup-confirm",
+    "organisationName": "#signup-org",
+    "register_button": "Get Started",
+    "submit": ".space-y-4 > .inline-flex",
+    "sign_up_endpoint": "api/v1/auth/register"
+  },
+  "loginPage": {
+    "sign_in_button": ".sm\\:gap-3 > .border",
+    "email": "input[type='email']",
+    "password": "input[type='password']",
+    "submit": ".space-y-5 > .inline-flex",
+    "sign_in_endpoint": "api/v1/user/me"
+  }
+}

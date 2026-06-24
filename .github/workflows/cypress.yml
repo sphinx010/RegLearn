@@ -1,0 +1,57 @@
+name: Cypress Tests
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Cypress tests
+        run: npx cypress run
+        env:
+          # ==========================================
+          # QA ENVIRONMENT
+          # ==========================================
+          QA_LEARNER_URL:          ${{ secrets.QA_LEARNER_URL }}
+          QA_LEARNER_EMAIL:        ${{ secrets.QA_LEARNER_EMAIL }}
+          QA_LEARNER_PASSWORD:     ${{ secrets.QA_LEARNER_PASSWORD }}
+
+          QA_ORG_ADMIN_URL:        ${{ secrets.QA_ORG_ADMIN_URL }}
+          QA_ORG_ADMIN_EMAIL:      ${{ secrets.QA_ORG_ADMIN_EMAIL }}
+          QA_ORG_ADMIN_PASSWORD:   ${{ secrets.QA_ORG_ADMIN_PASSWORD }}
+
+          QA_SUPER_ADMIN_URL:      ${{ secrets.QA_SUPER_ADMIN_URL }}
+          QA_SUPER_ADMIN_EMAIL:    ${{ secrets.QA_SUPER_ADMIN_EMAIL }}
+          QA_SUPER_ADMIN_PASSWORD: ${{ secrets.QA_SUPER_ADMIN_PASSWORD }}
+
+          QA_TRAINER_URL:          ${{ secrets.QA_TRAINER_URL }}
+          QA_TRAINER_EMAIL:        ${{ secrets.QA_TRAINER_EMAIL }}
+          QA_TRAINER_PASSWORD:     ${{ secrets.QA_TRAINER_PASSWORD }}
+
+          # ==========================================
+          # PRODUCTION ENVIRONMENT
+          # ==========================================
+          PROD_ADMIN_URL:          ${{ secrets.PROD_ADMIN_URL }}
+          PROD_ADMIN_EMAIL:        ${{ secrets.PROD_ADMIN_EMAIL }}
+          PROD_ADMIN_PASSWORD:     ${{ secrets.PROD_ADMIN_PASSWORD }}
+
+          PROD_LEARNER_URL:        ${{ secrets.PROD_LEARNER_URL }}
+          PROD_LEARNER_EMAIL:      ${{ secrets.PROD_LEARNER_EMAIL }}
+          PROD_LEARNER_PASSWORD:   ${{ secrets.PROD_LEARNER_PASSWORD }}

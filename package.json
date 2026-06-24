@@ -1,0 +1,27 @@
+{
+  "name": "reglearn",
+  "version": "1.0.0",
+  "description": "Automation framework for RegLearn",
+  "keywords": [
+    "RegTech"
+  ],
+  "homepage": "https://github.com/sphinx010/RegLearn#readme",
+  "bugs": {
+    "url": "https://github.com/sphinx010/RegLearn/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sphinx010/RegLearn.git"
+  },
+  "license": "ISC",
+  "author": "Opex_consulting",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "cypress": "^15.17.0",
+    "dotenv": "^17.4.2"
+  }
+}
