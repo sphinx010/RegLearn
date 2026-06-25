@@ -112,5 +112,42 @@ describe('Registration Page', () => {
     cy.wait('@login').its('response.statusCode').should('eq', 403);
   })
 
+  describe('Org Admin Login', () => {
+
+    let sign_in_button,
+      email_field,
+      password_field,
+      submit_button,
+      sign_in_endpoint;
+
+    let user = {
+      email: env.qa.orgAdmin.email,
+      password: env.qa.orgAdmin.password
+    }
+
+    beforeEach(() => {
+      // Ensure we start clean for each test
+      cy.clearCookies();
+      cy.clearLocalStorage();
+      cy.visit(env.qa.orgAdmin.url);
+      cy.fixture('selectorHub').then((selectors) => {
+        sign_in_button = selectors.loginPage.sign_in_button;
+        email_field = selectors.loginPage.email;
+        password_field = selectors.loginPage.password;
+        submit_button = selectors.loginPage.submit;
+        sign_in_endpoint = selectors.loginPage.sign_in_endpoint;
+      })
+    })
+
+    it('should Login organisation admin successfully', () => {
+      cy.intercept('POST', `**${sign_in_endpoint}`).as('login');
+      cy.get(sign_in_button).click({ timeout: 5000 });
+      cy.get(email_field).type(user.email);
+      cy.get(password_field).type(user.password);
+      cy.get(submit_button).click();
+      cy.wait('@login').its('response.statusCode').should('eq', 200);
+    })
+
+  })
 })
 
