@@ -2,13 +2,7 @@
 import env from '../support/env';
 
 describe('Learner Login', () => {
-
-  beforeEach(() => {
-    // Ensure we start clean for each test
-    cy.clearCookies();
-    cy.clearLocalStorage();
-  });
-
+  //prepare known fields
   let email_field,
     sign_in_button,
     password_field,
@@ -16,6 +10,9 @@ describe('Learner Login', () => {
     sign_in_endpoint;
 
   beforeEach(() => {
+    //Ensure we start clean for each test
+    cy.clearCookies();
+    cy.clearLocalStorage();
     //visit the login page
     cy.visit(env.qa.learner.url);
     //Set up selectors from fixtures
@@ -40,13 +37,8 @@ describe('Learner Login', () => {
 });
 
 
-describe.only('Registration Page', () => {
-  beforeEach(() => {
-    // Ensure we start clean for each test
-    cy.clearCookies();
-    cy.clearLocalStorage();
-  });
-
+describe('Registration Page', () => {
+  //prepare known fields
   let fullName_field,
     work_email_field,
     password_field,
@@ -54,17 +46,31 @@ describe.only('Registration Page', () => {
     organisationName_field,
     submit_button,
     sign_up_endpoint,
-    register_button;
+    register_button,
+    sign_in_endpoint,
+    s_email_field,
+    s_password_field,
+    s_sign_in_button,
+    s_submit_button
 
+  //prepare test data
   let user = {
     fullName: 'Ayooluwa Paul',
-    work_email: `weAreTesters${Math.random() * 100}@co.za`,
+    work_email: `weAreTesters${Math.floor(Math.random() * 1000)}@co.za`,
     password: 'password@@',
     confirmPassword: 'password@@',
-    organisationName: `organisationName${Math.random() * 100} we are`,
+    organisationName: `organisationName${Math.floor(Math.random() * 1000)} we are`,
   }
 
+  let getValues = {
+    workmail: '',
+    organisationName: '',
+
+  }
   beforeEach(() => {
+    // Ensure we start clean for each test
+    cy.clearCookies();
+    cy.clearLocalStorage();
     cy.visit(env.qa.learner.url);
     cy.fixture('selectorHub').then((selectors) => {
       fullName_field = selectors.signUpPage.fullName;
@@ -75,19 +81,35 @@ describe.only('Registration Page', () => {
       register_button = selectors.signUpPage.register_button;
       submit_button = selectors.signUpPage.submit;
       sign_up_endpoint = selectors.signUpPage.sign_up_endpoint;
+      sign_in_endpoint = selectors.loginPage.sign_in_endpoint;
+      s_email_field = selectors.loginPage.email;
+      s_password_field = selectors.loginPage.password;
+      s_sign_in_button = selectors.loginPage.sign_in_button;
+      s_submit_button = selectors.loginPage.submit;
     })
   })
 
-  it('should register successfully', () => {
+  it('should register New User successfully', () => {
     cy.intercept('POST', `**${sign_up_endpoint}`).as('signUp');
     cy.contains(register_button).click({ timeout: 5000 });
     cy.get(fullName_field).type(user.fullName);
-    cy.get(work_email_field).type(user.work_email);
+    cy.get(work_email_field).type(user.work_email)
+      .then(($emailInput) => { getValues.workmail = $emailInput.val() });
     cy.get(password_field).type(user.password);
     cy.get(confirmPassword_field).type(user.confirmPassword);
-    cy.get(organisationName_field).type(user.organisationName);
+    cy.get(organisationName_field).type(user.organisationName)
+      .then(($orgInput) => { getValues.organisationName = $orgInput.val() });
     cy.get(submit_button).click();
     cy.wait('@signUp').its('response.statusCode').should('eq', 200);
+  })
+
+  it('should not Login registered user without email verification', () => {
+    cy.intercept('POST', `**/api/v1/auth/login`).as('login');
+    cy.get(s_sign_in_button).click({ timeout: 5000 });
+    cy.get(s_email_field).type(getValues.workmail);
+    cy.get(s_password_field).type(user.password);
+    cy.get(s_submit_button).click();
+    cy.wait('@login').its('response.statusCode').should('eq', 403);
   })
 
 })
